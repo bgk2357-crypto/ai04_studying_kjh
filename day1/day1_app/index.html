@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 01 · 파이썬 실습실</title>
+  <style>
+    :root { color-scheme: light; --ink: #18283b; --muted: #65758a; --blue: #245ce2; --line: #dce4ee; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f3f6fb; color: var(--ink); font-family: "Malgun Gothic", system-ui, sans-serif; line-height: 1.65; }
+    header { background: #18283b; color: white; padding: 45px max(24px, calc((100vw - 1100px) / 2)); }
+    .eyebrow { color: #a7c3ff; letter-spacing: .14em; font-size: 12px; font-weight: 700; }
+    h1 { margin: 8px 0; font-size: clamp(27px, 4vw, 38px); letter-spacing: -.06em; }
+    header p { margin: 0; color: #c5d0df; }
+    .layout { max-width: 1148px; margin: 32px auto; padding: 0 24px; display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
+    nav { display: grid; gap: 8px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; border-radius: 10px; border: 1px solid transparent; padding: 11px 18px; font-weight: 700; }
+    nav button { text-align: left; background: transparent; color: var(--muted); padding: 14px; }
+    nav button span { font-size: 12px; margin-right: 12px; opacity: .7; }
+    nav button[aria-current="page"] { background: #e3ecff; color: #174abf; }
+    nav button:hover { background: #e8eef7; }
+    button:focus-visible, input:focus-visible { outline: 3px solid #779cff; outline-offset: 3px; }
+    .side-note { font-size: 12px; color: var(--muted); padding: 10px 14px; }
+    main { background: white; border: 1px solid var(--line); border-radius: 20px; padding: clamp(22px, 4vw, 40px); box-shadow: 0 12px 35px #18283b05; min-width: 0; }
+    [hidden] { display: none !important; }
+    .tag { display: inline-block; border: 1px solid var(--line); border-radius: 6px; padding: 2px 9px; font-size: 12px; color: var(--muted); }
+    h2 { font-size: 27px; letter-spacing: -.05em; margin: 14px 0 6px; }
+    .description { color: var(--muted); margin: 0 0 28px; }
+    label { display: block; font-size: 14px; font-weight: 700; margin: 0 0 8px; }
+    input { width: 100%; border: 1px solid #bcc9d9; border-radius: 9px; padding: 11px 13px; color: var(--ink); background: #fff; }
+    .field { max-width: 320px; margin-bottom: 20px; }
+    .numbers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+    .primary { background: var(--blue); color: white; }
+    .primary:hover { background: #194bc1; }
+    .secondary { background: #fff; color: var(--muted); border-color: var(--line); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .result { margin-top: 28px; padding: 22px; background: #f5f8fd; border: 1px solid var(--line); border-radius: 12px; overflow-wrap: anywhere; }
+    .result-label { display: block; color: var(--muted); font-size: 11px; letter-spacing: .12em; font-weight: 700; margin-bottom: 8px; }
+    .result p { margin: 0; white-space: pre-line; }
+    .result.success { background: #eef9f4; border-color: #a9d9c2; color: #176444; }
+    .equation { font-size: clamp(28px, 5vw, 40px); font-weight: 800; margin: 22px 0; letter-spacing: .04em; }
+    .equation span { color: var(--blue); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: center; white-space: nowrap; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--line); }
+    th { color: var(--blue); }
+    tbody tr:last-child td { border-bottom: 0; }
+    .hint { color: var(--muted); font-size: 13px; margin: 14px 0 0; }
+    footer { max-width: 1148px; margin: 0 auto 30px; padding: 0 24px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 720px) {
+      header { padding: 28px 20px; }
+      .layout { grid-template-columns: 1fr; margin-top: 20px; padding: 0 16px; gap: 16px; }
+      nav { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      nav button { padding: 11px; font-size: 13px; }
+      .side-note { display: none; }
+      .numbers { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">DAY 01 / PRACTICE LAB</div>
+    <h1>직접 해보는 기초 실습</h1>
+    <p>숫자를 입력하고, 결과를 확인하며 한 단계씩 익혀보세요.</p>
+  </header>
+  <div class="layout">
+    <aside>
+      <nav aria-label="실습 선택">
+        <button type="button" data-panel="addition" aria-current="page"><span>01</span>두 숫자 더하기</button>
+        <button type="button" data-panel="score"><span>02</span>점수 합격 판정</button>
+        <button type="button" data-panel="even"><span>03</span>짝수 찾기</button>
+        <button type="button" data-panel="table"><span>04</span>구구단 출력</button>
+        <button type="button" data-panel="game"><span>05</span>숫자 맞추기</button>
+      </nav>
+      <p class="side-note">5개의 작은 실습<br>왼쪽 메뉴에서 자유롭게 선택하세요.</p>
+    </aside>
+    <main>
+      <section id="addition" aria-labelledby="addition-title">
+        <span class="tag">변수 · 덧셈</span>
+        <h2 id="addition-title">두 숫자 더하기</h2>
+        <p class="description">두 변수에 저장한 100과 200을 더해봅니다.</p>
+        <div class="equation">100 + 200 = <span>?</span></div>
+        <button type="button" class="primary" id="add-button">계산하기</button>
+        <div class="result" role="status"><span class="result-label">RESULT</span><p id="addition-result">계산하기를 누르면 결과가 표시됩니다.</p></div>
+      </section>
+      <section id="score" aria-labelledby="score-title" hidden>
+        <span class="tag">입력 · 조건문</span>
+        <h2 id="score-title">점수 합격 판정</h2>
+        <p class="description">60점 이상이면 합격, 60점 미만이면 불합격입니다.</p>
+        <form id="score-form">
+          <div class="field"><label for="score-input">점수 (0~100)</label><input id="score-input" type="number" min="0" max="100" step="1" required placeholder="예: 75"></div>
+          <button class="primary" type="submit">결과 확인</button>
+        </form>
+        <div class="result" role="status"><span class="result-label">RESULT</span><p id="score-result">점수를 입력해보세요.</p></div>
+      </section>
+      <section id="even" aria-labelledby="even-title" hidden>
+        <span class="tag">리스트 · 반복문 · 나머지</span>
+        <h2 id="even-title">다섯 숫자에서 짝수 찾기</h2>
+        <p class="description">정수 5개를 입력하면 2로 나누어떨어지는 숫자를 찾아줍니다.</p>
+        <form id="even-form">
+          <div class="numbers">
+            <div><label for="number-1">첫 번째</label><input id="number-1" type="number" step="1" required placeholder="1"></div>
+            <div><label for="number-2">두 번째</label><input id="number-2" type="number" step="1" required placeholder="2"></div>
+            <div><label for="number-3">세 번째</label><input id="number-3" type="number" step="1" required placeholder="3"></div>
+            <div><label for="number-4">네 번째</label><input id="number-4" type="number" step="1" required placeholder="4"></div>
+            <div><label for="number-5">다섯 번째</label><input id="number-5" type="number" step="1" required placeholder="5"></div>
+          </div>
+          <button class="primary" type="submit">짝수 찾기</button>
+        </form>
+        <div class="result" role="status"><span class="result-label">RESULT</span><p id="even-result">0과 음수도 입력할 수 있습니다.</p></div>
+      </section>
+      <section id="table" aria-labelledby="table-title" hidden>
+        <span class="tag">중첩 반복문</span>
+        <h2 id="table-title">구구단 출력</h2>
+        <p class="description">기존 실습과 같이 2~4단을 각각 ×1~×4까지 출력합니다.</p>
+        <button class="primary" type="button" id="table-button">구구단 보기</button>
+        <div class="result" id="table-result" role="status"><span class="result-label">RESULT</span><p>구구단 보기를 눌러주세요.</p></div>
+      </section>
+      <section id="game" aria-labelledby="game-title" hidden>
+        <span class="tag">난수 · 비교 · 반복</span>
+        <h2 id="game-title">비밀 숫자를 맞혀보세요</h2>
+        <p class="description">1부터 100까지의 숫자 중 하나를 골랐어요. 힌트를 보고 정답에 가까워져 보세요.</p>
+        <form id="game-form">
+          <div class="field"><label for="guess-input">예상 숫자 (1~100)</label><input id="guess-input" type="number" min="1" max="100" step="1" required placeholder="예: 50"></div>
+          <div class="actions"><button class="primary" type="submit" id="guess-button">정답 확인</button><button class="secondary" type="button" id="reset-game">새 게임</button></div>
+        </form>
+        <p class="hint" id="game-count">시도 횟수: 0회</p>
+        <div class="result" id="game-result-box" role="status"><span class="result-label">HINT</span><p id="game-result">첫 번째 숫자를 입력해보세요.</p></div>
+      </section>
+    </main>
+  </div>
+  <footer>Day 01 · HTML 실습실 / 입력한 값은 현재 화면에서만 사용됩니다.</footer>
+  <script>
+    'use strict';
+    const get = (id) => document.getElementById(id);
+    const menuButtons = document.querySelectorAll('[data-panel]');
+    menuButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        menuButtons.forEach((item) => item.removeAttribute('aria-current'));
+        button.setAttribute('aria-current', 'page');
+        document.querySelectorAll('main section').forEach((section) => {
+          section.hidden = section.id !== button.dataset.panel;
+        });
+      });
+    });
+
+    // HTML의 required / min / max / step 검사에 정밀도 검사를 더합니다.
+    document.querySelectorAll('input[type="number"]').forEach((input) => {
+      input.addEventListener('input', () => {
+        input.setCustomValidity(input.value !== '' && !Number.isSafeInteger(input.valueAsNumber)
+          ? '정확히 계산할 수 있는 범위의 정수를 입력해주세요.' : '');
+      });
+    });
+
+    get('add-button').addEventListener('click', () => {
+      const number1 = 100;
+      const number2 = 200;
+      get('addition-result').textContent = `number1 + number2 = ${number1 + number2}`;
+      document.querySelector('.equation span').textContent = number1 + number2;
+    });
+
+    get('score-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const score = get('score-input').valueAsNumber;
+      get('score-result').textContent = `${score}점 · ${score >= 60 ? '합격' : '불합격'}`;
+    });
+
+    get('even-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const numbers = Array.from({ length: 5 }, (_, i) => get(`number-${i + 1}`).valueAsNumber);
+      const evenNumbers = numbers.filter((number) => number % 2 === 0);
+      get('even-result').textContent = `입력한 리스트: [${numbers.join(', ')}]\n` +
+        (evenNumbers.length ? `짝수: ${evenNumbers.join(', ')}` : '입력한 숫자에 짝수가 없습니다.');
+    });
+
+    get('table-button').addEventListener('click', () => {
+      const table = document.createElement('table');
+      table.innerHTML = '<caption>2~4단, ×1~×4</caption><thead><tr><th scope="col">2단</th><th scope="col">3단</th><th scope="col">4단</th></tr></thead>';
+      const body = table.createTBody();
+      for (let i = 1; i <= 4; i++) {
+        const row = body.insertRow();
+        for (let dan = 2; dan <= 4; dan++) {
+          row.insertCell().textContent = `${dan} × ${i} = ${dan * i}`;
+        }
+      }
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-wrap';
+      wrapper.append(table);
+      get('table-result').replaceChildren(wrapper);
+    });
+
+    let secretNumber;
+    let attempts;
+    let gameFinished;
+    function resetGame() {
+      secretNumber = Math.floor(Math.random() * 100) + 1;
+      attempts = 0;
+      gameFinished = false;
+      get('game-form').reset();
+      get('guess-input').setCustomValidity('');
+      get('guess-input').disabled = false;
+      get('guess-button').disabled = false;
+      get('game-count').textContent = '시도 횟수: 0회';
+      get('game-result').textContent = '첫 번째 숫자를 입력해보세요.';
+      get('game-result-box').classList.remove('success');
+    }
+    get('game-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (gameFinished) return;
+      const guess = get('guess-input').valueAsNumber;
+      attempts++;
+      get('game-count').textContent = `시도 횟수: ${attempts}회`;
+      if (guess === secretNumber) {
+        get('game-result').textContent = `정답입니다! 비밀 숫자는 ${secretNumber}입니다.\n${attempts}번 만에 맞혔어요. 새 게임으로 다시 도전하세요.`;
+        get('game-result-box').classList.add('success');
+        gameFinished = true;
+        get('guess-input').disabled = true;
+        get('guess-button').disabled = true;
+        get('reset-game').focus();
+      } else {
+        get('game-result').textContent = guess > secretNumber
+          ? `${guess}보다 더 작은 숫자를 입력하세요.`
+          : `${guess}보다 더 큰 숫자를 입력하세요.`;
+        get('guess-input').select();
+      }
+    });
+    get('reset-game').addEventListener('click', () => {
+      resetGame();
+      get('guess-input').focus();
+    });
+    resetGame();
+  </script>
+</body>
+</html>
