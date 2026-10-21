@@ -21,3 +21,4 @@ if __name__ == '__main__':
     print('활성 상태:', m.active)
     print('닉네임:', m.nickname)
     print('딕셔너리 변환:', m.model_dump())
+    print('day6_2.py',__name__)
