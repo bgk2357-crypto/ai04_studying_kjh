@@ -32,6 +32,7 @@ def main() -> None:
         print('error', e.errors()[0])
         print('데이터 검증 오류 발생!')
         print(e)
+        print('데이터 검증 오류 발생!')
 
 
 if __name__ == '__main__':
