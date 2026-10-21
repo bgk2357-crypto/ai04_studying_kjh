@@ -1,5 +1,5 @@
-# 필수 / 기본값, 모델 생성 / 검증
-from pydantic import BaseModel, ValidationError
+# 필수/기본값, 모델 생성/검증
+from pydantic import BaseModel,ValidationError
 
 class Member(BaseModel):
     username : str
@@ -7,18 +7,28 @@ class Member(BaseModel):
     active : bool = True
     nickname : str | None = None
 
-if __name__ == '__main__':
-    m = Member(
-        username='홍길동',
-        age=20,
-        active=True,
-        nickname=None
-    )
+class MemberOut(Member):
+    id : int
 
-    print('회원 정보:', m)
-    print('사용자 이름:', m.username)
-    print('나이:', m.age)
-    print('활성 상태:', m.active)
-    print('닉네임:', m.nickname)
-    print('딕셔너리 변환:', m.model_dump())
-    print('day6_2.py',__name__)
+def main() ->None:
+    member = Member(username = 'lee',age = 20)
+    print(member)
+    raw = {'username':'kim', 'age':'34','active':False}
+    parsed = Member.model_validate(raw)
+    print(parsed, 'age 타입',type(parsed.age).__name__)
+    print('nickname 기본값', parsed.nickname)
+
+    # 필수 필드 누락
+    try:
+        Member(username='kim',age=20)
+        # Member.model_validate({'username':'kim'})
+        
+        # memberout 객체생성
+        memberout = MemberOut(id=1,username='lee',age=20)
+        print(memberout)
+    except ValidationError as e:
+        print(e.errors()[0]['loc'], e.errors()[0]['type'])
+    
+    
+if __name__ == '__main__':
+    main()
