@@ -5,7 +5,7 @@ app = FastAPI()
 
 def legay_lookup():
     '''기존 동기 라이브러리의 느린 조회를 흉내내는 함수 '''
-    time.sleep(10)
+    time.sleep(2)
     return {'name':'학습자'}
 
 @app.get("/health")
