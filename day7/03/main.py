@@ -1,24 +1,30 @@
+# uvicorn Day7.03.main:app --reload
 from fastapi import FastAPI
 import httpx
 import os
 
 app = FastAPI()
-BASE_URL = 'http://127.0.01:9000'
+BASE_URL = 'http://127.0.0.1:9000'
 
 
 @app.get('/health')
 async def health():
-    return {'ststus': 'ok'}
+    return {'status': 'ok'}
 
 import asyncio
 from time import perf_counter
 
 async def fetch(client, item_id):
     response = await client.get(f'/items/{item_id}')
-    response.rasie_for_status()
+    response.raise_for_status()
     return response.json()
 
-@app.get('/summary') # 비동기 순차실행
+async def fetch_case(client, case):
+    response = await client.get(f'/cases/{case}')
+    response.raise_for_status()
+    return response.json()
+
+@app.get('/summary')  # 비동기 순차실행
 async def summary():
     start = perf_counter()
     async with httpx.AsyncClient(base_url=BASE_URL, timeout=3, trust_env=False) as client:
@@ -38,3 +44,11 @@ async def labels():
     return [{'requested_id': item_id, 'data': data}
             for item_id, data in zip(ids, completed)]
 
+@app.get('/case_summary')  # 비동기 순차실행
+async def case_summary():
+    start = perf_counter()
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=3, trust_env=False) as client:
+        items = []
+        for item_id in ['slow', 'missing', 'wrong_bool']:
+            items.append(await fetch_case(client, item_id))
+    return {'items': items, 'elapsed': round(perf_counter() - start, 3)}
