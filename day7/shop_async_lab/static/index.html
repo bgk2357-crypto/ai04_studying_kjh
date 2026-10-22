@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>장바구니 실험실 | 동기와 비동기</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a href="/" class="brand"><span class="brand-icon">▣</span> 장바구니 실험실</a><span class="tag">DAY 7 · FASTAPI × ASYNCIO</span></header>
+  <main>
+    <section class="intro"><p class="eyebrow">같은 장바구니, 다른 기다림</p><h1>고객이 기다리는 시간을<br><span>코드로 줄여보세요.</span></h1><p>상품 정보, 재고, 배송을 조회하는 쇼핑몰입니다.<br>처리 방식을 바꾸고 조회 시간과 서버의 응답성을 비교해 보세요.</p></section>
+    <div class="workspace">
+      <aside class="panel cart"><div class="section-heading"><h2>주문 미리보기</h2><span class="muted">01 ITEM</span></div>
+        <div class="product-art" aria-label="내추럴 색상의 캔버스 백 일러스트"><div class="bag-handle"></div><div class="bag">DAILY<br><small>ESSENTIALS</small></div><span>EVERYDAY COLLECTION</span></div>
+        <p class="eyebrow">DAILY OBJECTS</p><h3>데일리 캔버스 백</h3><p class="muted">내추럴 · 수량 1개</p><div class="price"><span>상품 금액</span><strong>32,000원</strong></div>
+        <div class="notice">학습용 샘플 데이터입니다.<br>외부 쇼핑몰 연결이나 실제 결제는 없습니다.</div>
+      </aside>
+      <section class="panel experiment"><div class="section-heading"><h2>처리 방식 선택</h2><span class="step">STEP 01</span></div>
+        <div class="modes" role="group" aria-label="처리 방식">
+          <button class="mode active" data-mode="sync" aria-pressed="true"><span class="number">01</span><strong>동기 · 순차 조회</strong><small>하나씩 끝내고 다음으로</small><span class="badge">약 4.0초</span></button>
+          <button class="mode" data-mode="blocking" aria-pressed="false"><span class="number">02</span><strong>이벤트 루프 차단</strong><small>async 안에서 time.sleep</small><span class="badge warn">약 4.0초 · 서버 지연</span></button>
+          <button class="mode" data-mode="async" aria-pressed="false"><span class="number">03</span><strong>비동기 · 동시 조회</strong><small>asyncio.gather + await</small><span class="badge green">약 1.8초</span></button>
+          <button class="mode" data-mode="thread" aria-pressed="false"><span class="number">04</span><strong>기존 동기 코드 개선</strong><small>asyncio.to_thread + gather</small><span class="badge green">약 1.8초</span></button>
+        </div>
+        <div class="options"><label for="scale">서비스 대기 시간</label><select id="scale"><option value="0.5">빠르게 · 0.5배</option><option value="1" selected>기본 · 1배</option><option value="2">느리게 · 2배</option></select></div>
+        <div class="explanation" id="explanation"></div>
+        <div class="actions"><button id="run" class="primary">선택한 방식으로 조회 <span>→</span></button><button id="compare" class="secondary">4가지 모두 비교</button></div>
+        <p class="status" id="status" role="status" aria-live="polite">준비 완료 · 기본 대기 시간: 상품 1.2초 / 재고 1.8초 / 배송 1.0초</p>
+      </section>
+    </div>
+    <section class="panel results"><div class="section-heading"><div><p class="eyebrow">실제 서버 측정값</p><h2>조회 결과와 실행 시간표</h2></div><button id="health" class="secondary">서버 응답 확인</button></div>
+      <div class="metrics"><div><span>선택한 방식 처리 시간</span><strong id="elapsed">— <small>초</small></strong></div><div><span>작업 중 서버 응답 대기</span><strong id="latency">— <small>ms</small></strong></div><p id="health-note">조회 시작 0.15초 뒤 같은 서버에 별도 요청을 보냅니다. 이벤트 루프가 막히면 이 요청도 기다립니다.</p></div>
+      <div id="timeline" class="timeline"><p class="empty">조회하면 각 작업의 실제 시작·종료 시점이 표시됩니다.</p></div>
+      <div id="service-results" class="service-results"></div>
+      <div class="table-wrap"><table><caption>실행 기록 <span>· 서버 처리 시간 / 별도 요청의 왕복 시간</span></caption><thead><tr><th>처리 방식</th><th>상품</th><th>재고</th><th>배송</th><th>전체</th><th>서버 응답 대기</th></tr></thead><tbody id="history"><tr><td colspan="6" class="empty">아직 실행 기록이 없습니다.</td></tr></tbody></table></div>
+    </section>
+    <footer><strong>관찰 포인트</strong><p>동시 조회 시간은 각 대기 시간의 합이 아닌 가장 긴 대기 시간에 가까워집니다. <code>async def</code>만 붙인다고 비동기가 되지는 않습니다. 이 예제는 I/O 대기를 재현하며 CPU 연산 속도를 비교하지 않습니다.</p><a href="/docs" target="_blank" rel="noopener">API 문서 ↗</a></footer>
+  </main>
+</body>
+</html>
