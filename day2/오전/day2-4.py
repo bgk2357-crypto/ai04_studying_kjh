@@ -2,9 +2,9 @@
 user_score = 85
 
 if user_score >= 80:
-    grade = 'pass'
+    grade = 'Pass'
 else:
     grade = 'Fail'
 
-# 삼황연산자
-grade = 'pass' if user_score >= 80 else 'Fail'
+# 삼항연산자
+grade = 'Pass' if user_score >=80 else 'Fail'
