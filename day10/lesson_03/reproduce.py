@@ -2,7 +2,7 @@
 from pathlib import Path
 import sqlite3
 from tempfile import TemporaryDirectory
-from main import prepare_database, read_users
+from day11.main import prepare_database, read_users
 
 
 if __name__ == "__main__":

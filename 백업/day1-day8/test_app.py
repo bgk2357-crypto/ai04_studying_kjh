@@ -6,7 +6,7 @@ from contextlib import closing
 import pytest
 from fastapi.testclient import TestClient
 
-import main
+import day11.main as main
 
 
 @pytest.fixture
