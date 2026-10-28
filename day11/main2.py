@@ -23,15 +23,59 @@ with psycopg.connect(
     conn.execute(
         "create schema if not exists ch2;"
     )
+    conn.execute('''drop table if exists ch2.users;''')
 
     conn.execute(
-"""
-create table if not exists users(
-  id bigint generated always as identity primary key,
-  name text not null,
-  email text not null unique
-);
-"""
+        """
+        create table if not exists ch2.users(
+        id bigint generated always as identity primary key,
+        name text not null,
+        email text not null unique
+        );
+        """
     )
-print('테이블 준비완료')    
-# 사용자 2명 입력
+    print('테이블 준비완료')    
+    # 사용자 2명 입력
+    users = [
+        ("이순신",'esunshin@korea.com'),("윤봉길","yoonbongil@korea.com")
+    ]
+
+    with conn.cursor() as cur:
+        cur.executemany("""
+            insert into ch2.users(name, email)
+            values(%s, %s)            
+        """, users)
+    print('사용자 저장 완료')
+
+    # 전체 조회
+    rows = conn.execute("""
+        select id, name, email from ch2.users order by id
+    """).fetchall()
+    for user_id,user_name,user_email in rows:
+        print(user_id,user_name,user_email)
+
+    # 수정  esunshin@korea.com  강감찬
+    conn.execute('''update ch2.users
+        set name = %s
+        where email = %s
+        ;''', ('강감찬','esunshin@korea.com' ) )
+
+    # 전체 조회
+    print('전체 조회-----------------------------------')
+    rows = conn.execute("""
+        select id, name, email from ch2.users order by id
+    """).fetchall()
+    for user_id,user_name,user_email in rows:
+        print(user_id,user_name,user_email)
+
+    # 삭제    
+    conn.execute('''delete from ch2.users where email =  %s;''',("yoonbongil@korea.com",))
+
+    # 전체 조회
+    print('전체 조회-----------------------------------')
+    rows = conn.execute("""
+        select id, name, email from ch2.users order by id
+    """).fetchall()
+    for user_id,user_name,user_email in rows:
+        print(user_id,user_name,user_email)
+print('접속 종료')    
