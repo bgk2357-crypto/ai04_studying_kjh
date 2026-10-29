@@ -1,4 +1,6 @@
-__pycache__/
-.pytest_cache/
-.venv/
-/day1-day8/test-output/
+output
+수업내용정리.md
+.vscode
+.venv
+.json
+.env
