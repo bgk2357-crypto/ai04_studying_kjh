@@ -7,3 +7,13 @@ output
 # Generated test caches and temporary output
 .pytest_cache/
 /day1-day8/test-output/
+
+# Shared exclusions for all projects in this repository
+__pycache__/
+*.py[cod]
+venv/
+venv314/
+node_modules/
+config.json
+.env.*
+!.env.example
