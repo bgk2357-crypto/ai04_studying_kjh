@@ -11,3 +11,6 @@ venv314/
 # Python 캐시
 __pycache__/
 *.py[cod]
+# Generated test caches and temporary output
+.pytest_cache/
+test-output/
