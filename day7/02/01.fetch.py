@@ -12,7 +12,7 @@ async def main(todo_id):
     )as client:
         response = await client.get(f"/posts/{todo_id}")
         print(response, type(response),response.json())
-        jsondata =response.json()        
+        jsondata = response.json()        
         print("\n\n",jsondata['title'])
 
 if __name__=='__main__':
