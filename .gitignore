@@ -1,0 +1,4 @@
+__pycache__/
+.pytest_cache/
+.venv/
+/day1-day8/test-output/
