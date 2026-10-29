@@ -4,3 +4,6 @@ output
 .venv
 .json
 .env
+# Generated test caches and temporary output
+.pytest_cache/
+/day1-day8/test-output/
