@@ -1,0 +1,2 @@
+# Supabase 방명록 실행 의존성
+-r requirements-supabase.txt

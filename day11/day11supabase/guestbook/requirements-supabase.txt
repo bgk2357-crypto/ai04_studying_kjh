@@ -1,0 +1,6 @@
+# 기존 Day8에서 사용하고 검증한 실행 라이브러리 버전
+fastapi==0.115.12
+pydantic==2.11.5
+uvicorn==0.34.2
+# SQLite 대신 Supabase PostgreSQL 연결
+psycopg[binary]==3.3.6

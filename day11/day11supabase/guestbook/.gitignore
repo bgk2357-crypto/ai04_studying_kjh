@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.test-output/
+config.json
+.env
+.env.*
+!.env.example
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+# Additional Python environments and generated files
+venv/
+venv314/
+*.py[cod]
+test-output/
