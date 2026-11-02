@@ -9,14 +9,19 @@ from pydantic import BaseModel,ConfigDict,EmailStr,Field, SecretStr
 from supabase.client import ClientOptions
 
 # 환경변수 load
-load_dotenv(override=True)
+load_dotenv(override=False, interpolate=False)
 
 supabase_url = os.getenv("SUPABASE_URL","").strip().rstrip("/")
 supabase_key = os.getenv('SUPABASE_PUBLISHABLE_KEY',"").strip()
 if not supabase_url or not supabase_key:
     raise RuntimeError('SUPABASE_URL or SUPABASE_PUBLISHABLE_KEY missing')
 
-app = FastAPI(title="Supabase Auth - 회원가입")
+if not supabase_url.startswith("https://"):
+    raise RuntimeError("SUPABASE_URL에는 https://로 시작하는 Project URL을 넣으세요.")
+if not supabase_key.startswith("sb_publishable_"):
+    raise RuntimeError("SUPABASE_PUBLISHABLE_KEY에는 publishable 키를 넣으세요.")
+
+app = FastAPI(title="Supabase Auth - 로그인과 JWT 발급")
 # pydentic을 이용한 타입검사
 class SignupRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -27,7 +32,7 @@ class SignupResponse(BaseModel):
     message : str
 
 @app.exception_handler(RequestValidationError)
-async def handelr_validation_error(_request:Request, exc:RequestValidationError):
+async def handle_validation_error(_request:Request, exc:RequestValidationError):
     errors = [
         {'loc':error['loc'], 'type' : error['type']}
         for error in exc.errors()
@@ -87,7 +92,6 @@ from fastapi import Response
 
 @app.post('/auth/login',response_model=LoginResponse) # 반환할 json구조 검증하고 swagger에 표시
 def login(body:LoginRequest,response:Response):
-    response.headers['Cache-Control'] = 'no-store'
     try:
         with httpx.Client(timeout=10.0) as http_client:
             supabase = create_client(
@@ -106,17 +110,24 @@ def login(body:LoginRequest,response:Response):
                 }
             )
     except AuthApiError as err:
+        if err.code == "invalid_credentials":
+            raise HTTPException(401, "이메일 또는 비밀번호를 확인하세요.") from None
+        if err.code == "email_not_confirmed":
+            raise HTTPException(403, "이메일 확인을 완료한 뒤 로그인하세요.") from None
         if err.status == 429:
-            raise HTTPException(429, '요청이 많습니다. 잠시 후 다시 시도하세요') from err
-        if err.status >= 500:
-            raise HTTPException(503, '인증 서비스를 사용할 수 없습니다. 잠시 후 다시 시도하세요') from err
-        raise HTTPException(401, '이메일·비밀번호와 이메일 인증 완료 여부를 확인하세요') from err
-    except (AuthRetryableError, httpx.HTTPError) as err:
-        raise HTTPException(503, '인증 서비스에 연결할 수 없습니다. 잠시 후 다시 시도하세요') from err
+            raise HTTPException(429, "요청이 많습니다. 잠시 후 다시 시도하세요.") from None
+        if err.status >= 500 or err.status in (401, 403):
+            raise HTTPException(503, "인증 서비스 상태 또는 연결 설정을 확인하세요.") from None
+        raise HTTPException(400, "로그인 요청을 처리할 수 없습니다. Auth 설정을 확인하세요.") from None
+    except (AuthRetryableError, httpx.HTTPError):
+        raise HTTPException(503, "인증 서비스에 연결할 수 없습니다. 잠시 후 다시 시도하세요.") from None
+
     session = result.session
     user = result.user
     if session is None or user is None:
-        raise HTTPException(401, '로그인 세션을 만들 수 없습니다')
+        raise HTTPException(502, "인증 서비스의 로그인 응답을 확인할 수 없습니다.")
+
+    response.headers['Cache-Control'] = 'no-store'
     return LoginResponse(
         access_token=session.access_token,
         refresh_token=session.refresh_token,
